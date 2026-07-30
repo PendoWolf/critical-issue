@@ -28,22 +28,54 @@ export function AuthProvider({ children }) {
       onboardingDraft,
       setOnboardingDraft,
       login: (email = defaultUser.email) => {
-        setUser({ ...defaultUser, email, onboarded: true });
+        const userData = { ...defaultUser, email, onboarded: true };
+        setUser(userData);
+        pendo.identify({
+          visitor: {
+            id: userData.email,
+            email: userData.email,
+            full_name: userData.name,
+            company: userData.company,
+            role: userData.role,
+            plan: userData.plan,
+            onboarded: userData.onboarded,
+          },
+          account: {
+            id: userData.company,
+            name: userData.company,
+          },
+        });
       },
       signup: (payload) => {
-        setUser({
-          ...defaultUser,
-          ...payload,
-          onboarded: false,
+        const userData = { ...defaultUser, ...payload, onboarded: false };
+        setUser(userData);
+        pendo.identify({
+          visitor: {
+            id: userData.email,
+            email: userData.email,
+            full_name: userData.name,
+            company: userData.company,
+            role: userData.role,
+            plan: userData.plan,
+            onboarded: userData.onboarded,
+          },
+          account: {
+            id: userData.company,
+            name: userData.company,
+          },
         });
       },
       completeOnboarding: () => {
         setUser((prev) => (prev ? { ...prev, onboarded: true } : prev));
       },
-      logout: () => setUser(null),
-      updatePlan: (plan) => setUser((prev) => (prev ? { ...prev, plan } : prev)),
+      logout: () => {
+        pendo.clearSession();
+        setUser(null);
+      },
+      updatePlan: (plan) =>
+        setUser((prev) => (prev ? { ...prev, plan } : prev)),
     }),
-    [user, onboardingDraft]
+    [user, onboardingDraft],
   );
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
