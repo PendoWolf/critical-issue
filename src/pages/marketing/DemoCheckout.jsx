@@ -1,4 +1,9 @@
-import { Link, useNavigate, useParams, useSearchParams } from "react-router-dom";
+import {
+  Link,
+  useNavigate,
+  useParams,
+  useSearchParams,
+} from "react-router-dom";
 import { plans } from "../../data/mockData";
 import { useAuth } from "../../context/AuthContext";
 import "./marketing.css";
@@ -14,12 +19,18 @@ export function DemoRequest() {
           <span className="eyebrow">Demo</span>
           <h1 className="page-title">Book a Trainora walkthrough</h1>
           <p>
-            Solution: {params.get("solution") || "platform overview"} · Plan interest:{" "}
-            {params.get("plan") || "undecided"}
+            Solution: {params.get("solution") || "platform overview"} · Plan
+            interest: {params.get("plan") || "undecided"}
           </p>
           <form
             onSubmit={(e) => {
               e.preventDefault();
+              pendo.track("demo_requested", {
+                solution: params.get("solution") || "platform overview",
+                plan_interest: params.get("plan") || "undecided",
+                training_interest:
+                  e.target.querySelector("select")?.value || "propensity",
+              });
               navigate("/demo/confirmed");
             }}
           >
@@ -45,7 +56,8 @@ export function DemoRequest() {
             </button>
           </form>
           <p style={{ marginTop: "1rem" }}>
-            Want to click around now? <Link to="/signup">Start a self-serve trial</Link>
+            Want to click around now?{" "}
+            <Link to="/signup">Start a self-serve trial</Link>
           </p>
         </div>
       </div>
@@ -58,7 +70,10 @@ export function DemoConfirmed() {
     <main className="section">
       <div className="container">
         <h1 className="page-title">Demo requested</h1>
-        <p>A solutions engineer will reach out with times. Meanwhile, explore these paths:</p>
+        <p>
+          A solutions engineer will reach out with times. Meanwhile, explore
+          these paths:
+        </p>
         <div className="hero-cta">
           <Link className="btn btn-primary" to="/resources">
             Browse resources
@@ -102,6 +117,11 @@ export function Checkout() {
                 onboarded: false,
               });
               updatePlan(plan.id);
+              pendo.track("checkout_completed", {
+                plan_id: plan.id,
+                plan_name: plan.name,
+                plan_price: plan.price,
+              });
               navigate(`/checkout/${plan.id}/success`);
             }}
           >
@@ -139,7 +159,9 @@ export function CheckoutSuccess() {
     <main className="section">
       <div className="container">
         <h1 className="page-title">Payment successful</h1>
-        <p>Your {planId} workspace is ready. Finish onboarding to unlock the app.</p>
+        <p>
+          Your {planId} workspace is ready. Finish onboarding to unlock the app.
+        </p>
         <Link className="btn btn-primary" to="/onboarding/company">
           Continue onboarding
         </Link>

@@ -50,7 +50,8 @@ export function CampaignsIndex() {
 
 export function CampaignDetail() {
   const { campaignId } = useParams();
-  const campaign = campaigns.find((item) => item.id === campaignId) || campaigns[0];
+  const campaign =
+    campaigns.find((item) => item.id === campaignId) || campaigns[0];
 
   return (
     <div>
@@ -59,10 +60,16 @@ export function CampaignDetail() {
         subtitle={`${campaign.channel} · ${campaign.status}`}
         actions={
           <>
-            <Link className="btn btn-secondary" to={`/app/campaigns/${campaign.id}/edit`}>
+            <Link
+              className="btn btn-secondary"
+              to={`/app/campaigns/${campaign.id}/edit`}
+            >
               Edit
             </Link>
-            <Link className="btn btn-primary" to={`/app/campaigns/${campaign.id}/results`}>
+            <Link
+              className="btn btn-primary"
+              to={`/app/campaigns/${campaign.id}/results`}
+            >
               View results
             </Link>
           </>
@@ -71,7 +78,9 @@ export function CampaignDetail() {
       <div className="grid-3">
         <div className="panel">
           <h3>Lift</h3>
-          <p style={{ fontSize: "2rem", margin: 0, color: "var(--ink)" }}>{campaign.lift}</p>
+          <p style={{ fontSize: "2rem", margin: 0, color: "var(--ink)" }}>
+            {campaign.lift}
+          </p>
         </div>
         <div className="panel">
           <h3>Linked model</h3>
@@ -92,16 +101,24 @@ export function CampaignResults() {
   const { campaignId } = useParams();
   return (
     <div>
-      <PageHeader title="Campaign results" subtitle={`Campaign ${campaignId}`} />
+      <PageHeader
+        title="Campaign results"
+        subtitle={`Campaign ${campaignId}`}
+      />
       <div className="grid-2">
         <div className="panel">
           <h3>Conversion rate</h3>
-          <p style={{ fontSize: "2rem", margin: 0, color: "var(--ink)" }}>4.8%</p>
+          <p style={{ fontSize: "2rem", margin: 0, color: "var(--ink)" }}>
+            4.8%
+          </p>
         </div>
         <div className="panel">
           <h3>Feedback loop</h3>
           <p>Send outcomes into the next training job.</p>
-          <Link className="btn btn-primary" to="/app/training/new?source=campaign-feedback">
+          <Link
+            className="btn btn-primary"
+            to="/app/training/new?source=campaign-feedback"
+          >
             Queue retrain
           </Link>
         </div>
@@ -126,7 +143,10 @@ export function CampaignCreate() {
       <div className="panel" style={{ maxWidth: 720 }}>
         <div className="steps">
           {["Basics", "Audience", "Model", "Launch"].map((label, i) => (
-            <span key={label} className={`step-pill ${step === i + 1 ? "active" : ""} ${step > i + 1 ? "done" : ""}`}>
+            <span
+              key={label}
+              className={`step-pill ${step === i + 1 ? "active" : ""} ${step > i + 1 ? "done" : ""}`}
+            >
               {label}
             </span>
           ))}
@@ -151,7 +171,9 @@ export function CampaignCreate() {
               <label>Channel mix</label>
               <select
                 value={draft.channel}
-                onChange={(e) => setDraft({ ...draft, channel: e.target.value })}
+                onChange={(e) =>
+                  setDraft({ ...draft, channel: e.target.value })
+                }
               >
                 <option>Email + Ads</option>
                 <option>Lifecycle</option>
@@ -170,7 +192,9 @@ export function CampaignCreate() {
               <label>Audience</label>
               <select
                 value={draft.audienceId}
-                onChange={(e) => setDraft({ ...draft, audienceId: e.target.value })}
+                onChange={(e) =>
+                  setDraft({ ...draft, audienceId: e.target.value })
+                }
               >
                 {audiences.map((audience) => (
                   <option key={audience.id} value={audience.id}>
@@ -199,7 +223,9 @@ export function CampaignCreate() {
               <label>Scoring model</label>
               <select
                 value={draft.modelId}
-                onChange={(e) => setDraft({ ...draft, modelId: e.target.value })}
+                onChange={(e) =>
+                  setDraft({ ...draft, modelId: e.target.value })
+                }
               >
                 {models.map((model) => (
                   <option key={model.id} value={model.id}>
@@ -237,13 +263,29 @@ export function CampaignCreate() {
               </button>
               <button
                 className="btn btn-primary"
-                onClick={() => navigate("/app/campaigns/cmp-104/results")}
+                onClick={() => {
+                  pendo.track("campaign_launched", {
+                    campaign_name: draft.name || "Untitled",
+                    channel: draft.channel,
+                    audience_id: draft.audienceId,
+                    model_id: draft.modelId,
+                  });
+                  navigate("/app/campaigns/cmp-104/results");
+                }}
               >
                 Launch campaign
               </button>
               <button
                 className="btn btn-ghost"
-                onClick={() => navigate("/app/campaigns")}
+                onClick={() => {
+                  pendo.track("campaign_draft_saved", {
+                    campaign_name: draft.name || "Untitled",
+                    channel: draft.channel,
+                    audience_id: draft.audienceId,
+                    model_id: draft.modelId,
+                  });
+                  navigate("/app/campaigns");
+                }}
               >
                 Save as draft
               </button>
@@ -266,7 +308,15 @@ export function CampaignEdit() {
           <label>Name</label>
           <input defaultValue="Q3 Enterprise Upsell" />
         </div>
-        <button className="btn btn-primary" onClick={() => navigate(`/app/campaigns/${campaignId}`)}>
+        <button
+          className="btn btn-primary"
+          onClick={() => {
+            pendo.track("campaign_edited", {
+              campaign_id: campaignId,
+            });
+            navigate(`/app/campaigns/${campaignId}`);
+          }}
+        >
           Save changes
         </button>
       </div>

@@ -19,7 +19,9 @@ export function Resources() {
           </Link>
           <Link className="panel" to="/changelog">
             <h3>Changelog</h3>
-            <p>What shipped recently across models, campaigns, and governance.</p>
+            <p>
+              What shipped recently across models, campaigns, and governance.
+            </p>
           </Link>
         </div>
       </div>
@@ -57,8 +59,9 @@ export function DocDetail() {
           {guide.title}
         </h1>
         <p>
-          This guide walks through the Trainora flow for <strong>{guide.slug}</strong>. Use the
-          CTAs below to jump into related product routes.
+          This guide walks through the Trainora flow for{" "}
+          <strong>{guide.slug}</strong>. Use the CTAs below to jump into related
+          product routes.
         </p>
         <div className="hero-cta">
           <Link className="btn btn-primary" to="/signup">
@@ -104,8 +107,9 @@ export function BlogPost() {
         </h1>
         <p>{post.excerpt}</p>
         <p>
-          Teams using Trainora typically start with a demo, then run a trial workspace with a
-          single model before expanding to multi-region training jobs.
+          Teams using Trainora typically start with a demo, then run a trial
+          workspace with a single model before expanding to multi-region
+          training jobs.
         </p>
         <Link className="btn btn-primary" to="/demo">
           Discuss with an expert
@@ -123,9 +127,18 @@ export function Customers() {
         <h1 className="page-title">Built for ambitious revenue teams</h1>
         <div className="grid-3" style={{ marginTop: "1.25rem" }}>
           {[
-            ["Northwind Analytics", "Cut model refresh time from weeks to overnight."],
-            ["Brightline Commerce", "Lifted paid conversion 14% with creative scoring."],
-            ["Helio Cloud", "Unified CRM + product signals for churn training."],
+            [
+              "Northwind Analytics",
+              "Cut model refresh time from weeks to overnight.",
+            ],
+            [
+              "Brightline Commerce",
+              "Lifted paid conversion 14% with creative scoring.",
+            ],
+            [
+              "Helio Cloud",
+              "Unified CRM + product signals for churn training.",
+            ],
           ].map(([name, result]) => (
             <div className="panel" key={name}>
               <h3>{name}</h3>
@@ -146,8 +159,8 @@ export function Company() {
         <span className="eyebrow">Company</span>
         <h1 className="page-title">We build marketing tech for AI training</h1>
         <p>
-          Trainora helps B2B teams operationalize model training without bolting together
-          notebooks, spreadsheets, and brittle activation scripts.
+          Trainora helps B2B teams operationalize model training without bolting
+          together notebooks, spreadsheets, and brittle activation scripts.
         </p>
         <div className="hero-cta">
           <Link className="btn btn-primary" to="/careers">
@@ -168,11 +181,18 @@ export function Careers() {
       <div className="container">
         <h1 className="page-title">Careers</h1>
         <div className="grid-2" style={{ marginTop: "1rem" }}>
-          {["Forward Deployed ML Engineer", "Product Designer", "Enterprise AE"].map((role) => (
+          {[
+            "Forward Deployed ML Engineer",
+            "Product Designer",
+            "Enterprise AE",
+          ].map((role) => (
             <div className="panel" key={role}>
               <h3>{role}</h3>
               <p>Remote-friendly · Full-time</p>
-              <Link className="btn btn-secondary" to={`/careers/apply?role=${encodeURIComponent(role)}`}>
+              <Link
+                className="btn btn-secondary"
+                to={`/careers/apply?role=${encodeURIComponent(role)}`}
+              >
                 Apply
               </Link>
             </div>
@@ -189,10 +209,15 @@ export function CareerApply() {
     <main className="section">
       <div className="container auth-card">
         <div className="panel">
-          <h1 className="page-title">Apply: {params.get("role") || "Open role"}</h1>
+          <h1 className="page-title">
+            Apply: {params.get("role") || "Open role"}
+          </h1>
           <form
             onSubmit={(e) => {
               e.preventDefault();
+              pendo.track("career_application_submitted", {
+                role: params.get("role") || "Open role",
+              });
               window.location.href = "/careers/thanks";
             }}
           >
@@ -243,6 +268,9 @@ export function Contact() {
           <form
             onSubmit={(e) => {
               e.preventDefault();
+              pendo.track("contact_form_submitted", {
+                topic: params.get("topic") || "general",
+              });
               window.location.href = "/contact/thanks";
             }}
           >
@@ -286,7 +314,11 @@ export function IntegrationsMarketing() {
         <h1 className="page-title">Connect the stack you already run</h1>
         <div className="grid-3" style={{ marginTop: "1.25rem" }}>
           {integrations.map((item) => (
-            <Link className="panel" key={item.id} to={`/integrations/${item.id}`}>
+            <Link
+              className="panel"
+              key={item.id}
+              to={`/integrations/${item.id}`}
+            >
               <h3>{item.name}</h3>
               <p>{item.category}</p>
               <span className="badge">{item.status}</span>
@@ -306,11 +338,14 @@ export function IntegrationDetail() {
       <div className="container">
         <h1 className="page-title">{item.name}</h1>
         <p>
-          Connect {item.name} to stream events into Trainora training jobs and campaign
-          activation.
+          Connect {item.name} to stream events into Trainora training jobs and
+          campaign activation.
         </p>
         <div className="hero-cta">
-          <Link className="btn btn-primary" to={`/app/integrations/${item.id}/connect`}>
+          <Link
+            className="btn btn-primary"
+            to={`/app/integrations/${item.id}/connect`}
+          >
             Connect in app
           </Link>
           <Link className="btn btn-secondary" to="/docs/quickstart">
@@ -328,14 +363,20 @@ export function Security() {
       <div className="container">
         <h1 className="page-title">Security & compliance</h1>
         <div className="grid-3" style={{ marginTop: "1rem" }}>
-          {["SOC 2 Type II", "SSO / SCIM", "Regional data residency"].map((item) => (
-            <div className="panel" key={item}>
-              <h3>{item}</h3>
-              <p>Available on Growth and Enterprise plans.</p>
-            </div>
-          ))}
+          {["SOC 2 Type II", "SSO / SCIM", "Regional data residency"].map(
+            (item) => (
+              <div className="panel" key={item}>
+                <h3>{item}</h3>
+                <p>Available on Growth and Enterprise plans.</p>
+              </div>
+            ),
+          )}
         </div>
-        <Link className="btn btn-primary" style={{ marginTop: "1rem" }} to="/demo?topic=security">
+        <Link
+          className="btn btn-primary"
+          style={{ marginTop: "1rem" }}
+          to="/demo?topic=security"
+        >
           Request security review
         </Link>
       </div>
@@ -350,7 +391,10 @@ export function Changelog() {
         <h1 className="page-title">Changelog</h1>
         <div className="panel">
           <h3>July 2026</h3>
-          <p>Multi-region training queues, creative scoring v2, and billing self-serve upgrades.</p>
+          <p>
+            Multi-region training queues, creative scoring v2, and billing
+            self-serve upgrades.
+          </p>
         </div>
       </div>
     </main>
@@ -364,8 +408,8 @@ export function StatusPage() {
         <h1 className="page-title">System status</h1>
         <div className="panel">
           <p>
-            <span className="badge">Operational</span> All training clusters and activation APIs
-            are healthy.
+            <span className="badge">Operational</span> All training clusters and
+            activation APIs are healthy.
           </p>
           <Link to="/">Return home</Link>
         </div>
