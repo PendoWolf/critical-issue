@@ -1,38 +1,16 @@
-# Trainora — B2B Marketing AI Training Platform
+# React + Vite
 
-Demo web app for route / user-journey scanning. Trainora is a fictional B2B marketing-tech product for training and activating AI models.
+This template provides a minimal setup to get React working in Vite with HMR and some Oxlint rules.
 
-## Quick start
+Currently, two official plugins are available:
 
-```bash
-npm install
-npm run dev
-```
+- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
+- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
 
-Open the URL Vite prints (usually `http://localhost:5173`).
+## React Compiler
 
-## Auth for product routes
+The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
 
-App routes under `/app/*` require login. Use any email/password on `/login`, or complete `/signup` → onboarding.
+## Expanding the Oxlint configuration
 
-## Major user flows (for scanners)
-
-1. **Self-serve trial** — `/` → `/signup` → `/onboarding/*` → `/app`
-2. **Sales demo** — `/` → `/demo` → `/demo/confirmed` → `/resources` or `/signup`
-3. **Paid checkout** — `/pricing` → `/checkout/:planId` → `/checkout/:planId/success` → onboarding
-4. **Returning user** — `/login` or `/login/sso` → `/app`
-5. **Password reset** — `/forgot-password` → `/forgot-password/sent` → `/reset-password` → `/login`
-6. **Campaign launch** — `/app/campaigns/new` (4 steps) → results → retrain
-7. **Training job** — `/app/training/new` (4 steps) → job detail → logs → model
-8. **Audience import** — `/app/audiences/import` (3 steps) → audience detail
-9. **Integration connect** — `/integrations/:id` → `/app/integrations/:id/connect` → success
-10. **Billing upgrade** — `/app/settings/billing/upgrade` → success or enterprise demo
-11. **Team invite** — `/app/settings/team/invite` → sent
-12. **Admin** — `/app/admin` → audit log / environments / API keys
-13. **Content → product** — `/blog/:slug`, `/docs/:slug`, `/solutions/:slug` into trial/demo/docs
-
-## Scripts
-
-- `npm run dev` — local development
-- `npm run build` — production build
-- `npm run preview` — preview production build
+If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and Oxlint's TypeScript related rules in your project.

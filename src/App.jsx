@@ -1,201 +1,159 @@
-import { Navigate, Route, Routes } from "react-router-dom";
-import MarketingLayout from "./components/MarketingLayout";
-import AppShell from "./components/AppShell";
-import ProtectedRoute from "./components/ProtectedRoute";
+import { useEffect, useId, useState } from 'react'
+import './App.css'
 
-import Home from "./pages/marketing/Home";
-import Pricing from "./pages/marketing/Pricing";
-import { SolutionDetail, SolutionsIndex } from "./pages/marketing/Solutions";
-import {
-  BlogIndex,
-  BlogPost,
-  CareerApply,
-  Careers,
-  CareerThanks,
-  Changelog,
-  Company,
-  Contact,
-  ContactThanks,
-  Customers,
-  DocDetail,
-  DocsIndex,
-  IntegrationDetail,
-  IntegrationsMarketing,
-  NotFound,
-  Resources,
-  Security,
-  StatusPage,
-} from "./pages/marketing/MiscPages";
-import {
-  Checkout,
-  CheckoutSuccess,
-  DemoConfirmed,
-  DemoRequest,
-} from "./pages/marketing/DemoCheckout";
-import {
-  ForgotPassword,
-  ForgotPasswordSent,
-  Login,
-  ResetPassword,
-  Signup,
-  SSOLogin,
-} from "./pages/auth/AuthPages";
-import {
-  OnboardingChannels,
-  OnboardingCompany,
-  OnboardingDataset,
-  OnboardingLayout,
-  OnboardingReview,
-  OnboardingUseCase,
-} from "./pages/onboarding/Onboarding";
-import Dashboard from "./pages/app/Dashboard";
-import {
-  CampaignCreate,
-  CampaignDetail,
-  CampaignEdit,
-  CampaignResults,
-  CampaignsIndex,
-} from "./pages/app/Campaigns";
-import {
-  ModelDetail,
-  ModelGovernance,
-  ModelsIndex,
-  ModelVersions,
-  TrainingCreate,
-  TrainingIndex,
-  TrainingJobDetail,
-  TrainingLogs,
-} from "./pages/app/ModelsTraining";
-import {
-  AnalyticsExport,
-  AnalyticsExportDone,
-  AnalyticsHome,
-  AnalyticsReports,
-  AudienceCreate,
-  AudienceDetail,
-  AudienceImport,
-  AudiencesIndex,
-} from "./pages/app/AudiencesAnalytics";
-import {
-  AdminApiKeyCreate,
-  AdminApiKeys,
-  AdminAuditLog,
-  AdminConsole,
-  AdminEnvironments,
-  AppIntegrations,
-  BillingUpgrade,
-  BillingUpgradeSuccess,
-  ExperimentCreate,
-  ExperimentDetail,
-  Experiments,
-  IntegrationConnect,
-  IntegrationSuccess,
-  SettingsBilling,
-  SettingsNotifications,
-  SettingsTeam,
-  SettingsWorkspace,
-  TeamInvite,
-  TeamInviteSent,
-} from "./pages/app/IntegrationsSettings";
+const STORAGE_KEY = 'clearlist-todos'
 
-export default function App() {
-  return (
-    <Routes>
-      <Route element={<MarketingLayout />}>
-        <Route index element={<Home />} />
-        <Route path="solutions" element={<SolutionsIndex />} />
-        <Route path="solutions/:slug" element={<SolutionDetail />} />
-        <Route path="pricing" element={<Pricing />} />
-        <Route path="resources" element={<Resources />} />
-        <Route path="docs" element={<DocsIndex />} />
-        <Route path="docs/:slug" element={<DocDetail />} />
-        <Route path="blog" element={<BlogIndex />} />
-        <Route path="blog/:slug" element={<BlogPost />} />
-        <Route path="customers" element={<Customers />} />
-        <Route path="company" element={<Company />} />
-        <Route path="careers" element={<Careers />} />
-        <Route path="careers/apply" element={<CareerApply />} />
-        <Route path="careers/thanks" element={<CareerThanks />} />
-        <Route path="contact" element={<Contact />} />
-        <Route path="contact/thanks" element={<ContactThanks />} />
-        <Route path="integrations" element={<IntegrationsMarketing />} />
-        <Route path="integrations/:id" element={<IntegrationDetail />} />
-        <Route path="security" element={<Security />} />
-        <Route path="changelog" element={<Changelog />} />
-        <Route path="status" element={<StatusPage />} />
-        <Route path="demo" element={<DemoRequest />} />
-        <Route path="demo/confirmed" element={<DemoConfirmed />} />
-        <Route path="checkout/:planId" element={<Checkout />} />
-        <Route path="checkout/:planId/success" element={<CheckoutSuccess />} />
-        <Route path="login" element={<Login />} />
-        <Route path="login/sso" element={<SSOLogin />} />
-        <Route path="signup" element={<Signup />} />
-        <Route path="forgot-password" element={<ForgotPassword />} />
-        <Route path="forgot-password/sent" element={<ForgotPasswordSent />} />
-        <Route path="reset-password" element={<ResetPassword />} />
-      </Route>
-
-      <Route path="onboarding" element={<OnboardingLayout />}>
-        <Route index element={<Navigate to="company" replace />} />
-        <Route path="company" element={<OnboardingCompany />} />
-        <Route path="use-case" element={<OnboardingUseCase />} />
-        <Route path="channels" element={<OnboardingChannels />} />
-        <Route path="dataset" element={<OnboardingDataset />} />
-        <Route path="review" element={<OnboardingReview />} />
-      </Route>
-
-      <Route
-        path="app"
-        element={
-          <ProtectedRoute requireOnboarded>
-            <AppShell />
-          </ProtectedRoute>
-        }
-      >
-        <Route index element={<Dashboard />} />
-        <Route path="campaigns" element={<CampaignsIndex />} />
-        <Route path="campaigns/new" element={<CampaignCreate />} />
-        <Route path="campaigns/:campaignId" element={<CampaignDetail />} />
-        <Route path="campaigns/:campaignId/edit" element={<CampaignEdit />} />
-        <Route path="campaigns/:campaignId/results" element={<CampaignResults />} />
-        <Route path="models" element={<ModelsIndex />} />
-        <Route path="models/:modelId" element={<ModelDetail />} />
-        <Route path="models/:modelId/versions" element={<ModelVersions />} />
-        <Route path="models/:modelId/governance" element={<ModelGovernance />} />
-        <Route path="training" element={<TrainingIndex />} />
-        <Route path="training/new" element={<TrainingCreate />} />
-        <Route path="training/:jobId" element={<TrainingJobDetail />} />
-        <Route path="training/:jobId/logs" element={<TrainingLogs />} />
-        <Route path="audiences" element={<AudiencesIndex />} />
-        <Route path="audiences/new" element={<AudienceCreate />} />
-        <Route path="audiences/import" element={<AudienceImport />} />
-        <Route path="audiences/:audienceId" element={<AudienceDetail />} />
-        <Route path="analytics" element={<AnalyticsHome />} />
-        <Route path="analytics/reports" element={<AnalyticsReports />} />
-        <Route path="analytics/reports/export" element={<AnalyticsExport />} />
-        <Route path="analytics/reports/export/done" element={<AnalyticsExportDone />} />
-        <Route path="integrations" element={<AppIntegrations />} />
-        <Route path="integrations/:integrationId/connect" element={<IntegrationConnect />} />
-        <Route path="integrations/:integrationId/success" element={<IntegrationSuccess />} />
-        <Route path="experiments" element={<Experiments />} />
-        <Route path="experiments/new" element={<ExperimentCreate />} />
-        <Route path="experiments/:experimentId" element={<ExperimentDetail />} />
-        <Route path="settings" element={<SettingsWorkspace />} />
-        <Route path="settings/team" element={<SettingsTeam />} />
-        <Route path="settings/team/invite" element={<TeamInvite />} />
-        <Route path="settings/team/invite/sent" element={<TeamInviteSent />} />
-        <Route path="settings/billing" element={<SettingsBilling />} />
-        <Route path="settings/billing/upgrade" element={<BillingUpgrade />} />
-        <Route path="settings/billing/upgrade/success" element={<BillingUpgradeSuccess />} />
-        <Route path="settings/notifications" element={<SettingsNotifications />} />
-        <Route path="admin" element={<AdminConsole />} />
-        <Route path="admin/audit-log" element={<AdminAuditLog />} />
-        <Route path="admin/environments" element={<AdminEnvironments />} />
-        <Route path="admin/api-keys" element={<AdminApiKeys />} />
-        <Route path="admin/api-keys/new" element={<AdminApiKeyCreate />} />
-      </Route>
-
-      <Route path="*" element={<NotFound />} />
-    </Routes>
-  );
+function loadTodos() {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY)
+    if (!raw) return []
+    const parsed = JSON.parse(raw)
+    return Array.isArray(parsed) ? parsed : []
+  } catch {
+    return []
+  }
 }
+
+function App() {
+  const [todos, setTodos] = useState(loadTodos)
+  const [text, setText] = useState('')
+  const [filter, setFilter] = useState('all')
+  const inputId = useId()
+
+  useEffect(() => {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(todos))
+  }, [todos])
+
+  function addTodo(event) {
+    event.preventDefault()
+    const value = text.trim()
+    if (!value) return
+
+    setTodos((current) => [
+      { id: crypto.randomUUID(), text: value, done: false },
+      ...current,
+    ])
+    setText('')
+  }
+
+  function toggleTodo(id) {
+    setTodos((current) =>
+      current.map((todo) =>
+        todo.id === id ? { ...todo, done: !todo.done } : todo,
+      ),
+    )
+  }
+
+  function deleteTodo(id) {
+    setTodos((current) => current.filter((todo) => todo.id !== id))
+  }
+
+  function clearCompleted() {
+    setTodos((current) => current.filter((todo) => !todo.done))
+  }
+
+  const visibleTodos = todos.filter((todo) => {
+    if (filter === 'active') return !todo.done
+    if (filter === 'done') return todo.done
+    return true
+  })
+
+  const remaining = todos.filter((todo) => !todo.done).length
+  const completedCount = todos.length - remaining
+
+  return (
+    <div className="app">
+      <div className="atmosphere" aria-hidden="true" />
+
+      <main className="shell">
+        <header className="hero">
+          <p className="brand">Clearlist</p>
+          <h1>What needs doing?</h1>
+          <p className="lede">Add a task, check it off, keep moving.</p>
+        </header>
+
+        <form className="composer" onSubmit={addTodo}>
+          <label className="sr-only" htmlFor={inputId}>
+            New task
+          </label>
+          <input
+            id={inputId}
+            type="text"
+            value={text}
+            onChange={(event) => setText(event.target.value)}
+            placeholder="Write a task…"
+            autoComplete="off"
+          />
+          <button type="submit" disabled={!text.trim()}>
+            Add
+          </button>
+        </form>
+
+        <div className="toolbar">
+          <p className="count">
+            {remaining === 0
+              ? todos.length === 0
+                ? 'No tasks yet'
+                : 'All clear'
+              : `${remaining} left`}
+          </p>
+          <div className="filters" role="group" aria-label="Filter tasks">
+            {[
+              ['all', 'All'],
+              ['active', 'Active'],
+              ['done', 'Done'],
+            ].map(([value, label]) => (
+              <button
+                key={value}
+                type="button"
+                className={filter === value ? 'is-active' : undefined}
+                onClick={() => setFilter(value)}
+              >
+                {label}
+              </button>
+            ))}
+          </div>
+        </div>
+
+        <ul className="list">
+          {visibleTodos.map((todo, index) => (
+            <li
+              key={todo.id}
+              className={todo.done ? 'item is-done' : 'item'}
+              style={{ '--i': index }}
+            >
+              <label>
+                <input
+                  type="checkbox"
+                  checked={todo.done}
+                  onChange={() => toggleTodo(todo.id)}
+                />
+                <span>{todo.text}</span>
+              </label>
+              <button
+                type="button"
+                className="delete"
+                onClick={() => deleteTodo(todo.id)}
+                aria-label={`Delete ${todo.text}`}
+              >
+                ×
+              </button>
+            </li>
+          ))}
+        </ul>
+
+        {visibleTodos.length === 0 && todos.length > 0 && (
+          <p className="empty">Nothing in this view.</p>
+        )}
+
+        {completedCount > 0 && (
+          <button type="button" className="clear" onClick={clearCompleted}>
+            Clear {completedCount} completed
+          </button>
+        )}
+      </main>
+    </div>
+  )
+}
+
+export default App
