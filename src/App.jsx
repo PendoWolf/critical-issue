@@ -35,8 +35,8 @@ function App() {
     ]);
     setText("");
 
-    if (typeof pendo !== "undefined") {
-      pendo.track("task_added", {
+    if (window.pendo) {
+      window.pendo.track("task_added", {
         taskTextLength: value.length,
         totalTaskCount: todos.length + 1,
         activeTaskCount: todos.filter((t) => !t.done).length + 1,
@@ -52,10 +52,10 @@ function App() {
       ),
     );
 
-    if (typeof pendo !== "undefined" && todo) {
+    if (window.pendo && todo) {
       const isCompleting = !todo.done;
       const currentCompleted = todos.filter((t) => t.done).length;
-      pendo.track("task_completed", {
+      window.pendo.track("task_completed", {
         action: isCompleting ? "completed" : "uncompleted",
         totalTaskCount: todos.length,
         completedTaskCount: currentCompleted + (isCompleting ? 1 : -1),
@@ -69,9 +69,9 @@ function App() {
     const todo = todos.find((t) => t.id === id);
     setTodos((current) => current.filter((todo) => todo.id !== id));
 
-    if (typeof pendo !== "undefined" && todo) {
+    if (window.pendo && todo) {
       const activeCount = todos.filter((t) => !t.done).length;
-      pendo.track("task_deleted", {
+      window.pendo.track("task_deleted", {
         taskWasCompleted: todo.done,
         totalTaskCountAfter: todos.length - 1,
         remainingTaskCountAfter: activeCount - (todo.done ? 0 : 1),
@@ -84,8 +84,8 @@ function App() {
     const active = todos.length - completed;
     setTodos((current) => current.filter((todo) => !todo.done));
 
-    if (typeof pendo !== "undefined") {
-      pendo.track("completed_tasks_cleared", {
+    if (window.pendo) {
+      window.pendo.track("completed_tasks_cleared", {
         clearedCount: completed,
         remainingTaskCount: active,
       });
