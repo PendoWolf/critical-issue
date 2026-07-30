@@ -18,18 +18,32 @@ export function Login() {
           onSubmit={(e) => {
             e.preventDefault();
             login(email);
+            window.pendo?.track("user_logged_in", {
+              login_method: "password",
+              redirect_target: params.get("next") || "/app",
+              email_domain: email.split("@")[1] || "",
+            });
             navigate(params.get("next") || "/app");
           }}
         >
           <div className="field">
             <label>Work email</label>
-            <input value={email} onChange={(e) => setEmail(e.target.value)} type="email" required />
+            <input
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              type="email"
+              required
+            />
           </div>
           <div className="field">
             <label>Password</label>
             <input type="password" defaultValue="password" required />
           </div>
-          <button className="btn btn-primary" type="submit" style={{ width: "100%" }}>
+          <button
+            className="btn btn-primary"
+            type="submit"
+            style={{ width: "100%" }}
+          >
             Log in
           </button>
         </form>
@@ -71,6 +85,12 @@ export function Signup() {
           onSubmit={(e) => {
             e.preventDefault();
             signup({ ...form, onboarded: false });
+            window.pendo?.track("user_signed_up", {
+              plan: form.plan,
+              intent: params.get("intent") || "general",
+              company: form.company,
+              email_domain: form.email.split("@")[1] || "",
+            });
             navigate("/onboarding/company");
           }}
         >
@@ -99,7 +119,11 @@ export function Signup() {
               onChange={(e) => setForm({ ...form, company: e.target.value })}
             />
           </div>
-          <button className="btn btn-primary" type="submit" style={{ width: "100%" }}>
+          <button
+            className="btn btn-primary"
+            type="submit"
+            style={{ width: "100%" }}
+          >
             Create account
           </button>
         </form>
@@ -124,12 +148,19 @@ export function SSOLogin() {
           onSubmit={(e) => {
             e.preventDefault();
             login(`sso@${domain}`);
+            window.pendo?.track("sso_login_completed", {
+              company_domain: domain,
+            });
             navigate("/app");
           }}
         >
           <div className="field">
             <label>Company domain</label>
-            <input value={domain} onChange={(e) => setDomain(e.target.value)} required />
+            <input
+              value={domain}
+              onChange={(e) => setDomain(e.target.value)}
+              required
+            />
           </div>
           <button className="btn btn-primary" type="submit">
             Continue to identity provider
@@ -152,6 +183,12 @@ export function ForgotPassword() {
         <form
           onSubmit={(e) => {
             e.preventDefault();
+            const emailValue = e.target.querySelector(
+              "input[type='email']",
+            ).value;
+            window.pendo?.track("password_reset_requested", {
+              email_domain: emailValue.split("@")[1] || "",
+            });
             navigate("/forgot-password/sent");
           }}
         >
@@ -191,6 +228,7 @@ export function ResetPassword() {
         <form
           onSubmit={(e) => {
             e.preventDefault();
+            window.pendo?.track("password_reset_completed");
             navigate("/login");
           }}
         >

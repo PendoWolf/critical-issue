@@ -18,7 +18,10 @@ export function AppIntegrations() {
             <p>{item.category}</p>
             <span className="badge">{item.status}</span>
             <div style={{ marginTop: "0.85rem" }}>
-              <Link className="btn btn-secondary" to={`/app/integrations/${item.id}/connect`}>
+              <Link
+                className="btn btn-secondary"
+                to={`/app/integrations/${item.id}/connect`}
+              >
                 {item.status === "Connected" ? "Manage" : "Connect"}
               </Link>
             </div>
@@ -31,13 +34,18 @@ export function AppIntegrations() {
 
 export function IntegrationConnect() {
   const { integrationId } = useParams();
-  const item = integrations.find((entry) => entry.id === integrationId) || integrations[0];
+  const item =
+    integrations.find((entry) => entry.id === integrationId) || integrations[0];
   const navigate = useNavigate();
   const [step, setStep] = useState(1);
+  const [syncFrequency, setSyncFrequency] = useState("hourly");
 
   return (
     <div>
-      <PageHeader title={`Connect ${item.name}`} subtitle={`Step ${step} of 3`} />
+      <PageHeader
+        title={`Connect ${item.name}`}
+        subtitle={`Step ${step} of 3`}
+      />
       <div className="panel" style={{ maxWidth: 640 }}>
         {step === 1 && (
           <div>
@@ -51,7 +59,10 @@ export function IntegrationConnect() {
           <div>
             <div className="field">
               <label>Sync frequency</label>
-              <select defaultValue="hourly">
+              <select
+                value={syncFrequency}
+                onChange={(e) => setSyncFrequency(e.target.value)}
+              >
                 <option value="hourly">Hourly</option>
                 <option value="daily">Daily</option>
                 <option value="realtime">Near real-time</option>
@@ -77,7 +88,15 @@ export function IntegrationConnect() {
               </button>
               <button
                 className="btn btn-primary"
-                onClick={() => navigate(`/app/integrations/${item.id}/success`)}
+                onClick={() => {
+                  window.pendo?.track("integration_connected", {
+                    integration_id: item.id,
+                    integration_name: item.name,
+                    integration_category: item.category,
+                    sync_frequency: syncFrequency,
+                  });
+                  navigate(`/app/integrations/${item.id}/success`);
+                }}
               >
                 Finish setup
               </button>
@@ -148,7 +167,10 @@ export function ExperimentDetail() {
   const { experimentId } = useParams();
   return (
     <div>
-      <PageHeader title={`Experiment ${experimentId}`} subtitle="Policy comparison" />
+      <PageHeader
+        title={`Experiment ${experimentId}`}
+        subtitle="Policy comparison"
+      />
       <div className="grid-2">
         <div className="panel">
           <h3>Control</h3>
@@ -159,7 +181,11 @@ export function ExperimentDetail() {
           <p>Conversion 4.4%</p>
         </div>
       </div>
-      <Link className="btn btn-primary" style={{ marginTop: "1rem" }} to="/app/campaigns/new">
+      <Link
+        className="btn btn-primary"
+        style={{ marginTop: "1rem" }}
+        to="/app/campaigns/new"
+      >
         Promote winner to campaign
       </Link>
     </div>
@@ -183,7 +209,17 @@ export function ExperimentCreate() {
             <option value="80">80 / 20</option>
           </select>
         </div>
-        <button className="btn btn-primary" onClick={() => navigate("/app/experiments/exp-12")}>
+        <button
+          className="btn btn-primary"
+          onClick={(e) => {
+            const panel = e.currentTarget.closest(".panel");
+            window.pendo?.track("experiment_launched", {
+              experiment_name: panel?.querySelector("input")?.value || "",
+              traffic_split: panel?.querySelector("select")?.value || "",
+            });
+            navigate("/app/experiments/exp-12");
+          }}
+        >
           Launch experiment
         </button>
       </div>
@@ -269,7 +305,16 @@ export function TeamInvite() {
             <option value="marketer">Marketer</option>
           </select>
         </div>
-        <button className="btn btn-primary" onClick={() => navigate("/app/settings/team/invite/sent")}>
+        <button
+          className="btn btn-primary"
+          onClick={(e) => {
+            const panel = e.currentTarget.closest(".panel");
+            window.pendo?.track("team_member_invited", {
+              invitee_role: panel?.querySelector("select")?.value || "",
+            });
+            navigate("/app/settings/team/invite/sent");
+          }}
+        >
           Send invite
         </button>
       </div>
@@ -310,7 +355,7 @@ export function SettingsBilling() {
 }
 
 export function BillingUpgrade() {
-  const { updatePlan } = useAuth();
+  const { updatePlan, user } = useAuth();
   const navigate = useNavigate();
   return (
     <div>
@@ -324,6 +369,10 @@ export function BillingUpgrade() {
               onClick={() => {
                 if (plan === "enterprise") navigate("/demo?plan=enterprise");
                 else {
+                  window.pendo?.track("plan_upgraded", {
+                    new_plan: plan,
+                    previous_plan: user?.plan || "",
+                  });
                   updatePlan(plan);
                   navigate("/app/settings/billing/upgrade/success");
                 }
@@ -354,12 +403,21 @@ export function SettingsNotifications() {
     <div>
       <PageHeader title="Notifications" />
       <div className="panel" style={{ maxWidth: 560 }}>
-        {["Training job completed", "Model drift alerts", "Weekly digest"].map((item) => (
-          <label key={item} style={{ display: "flex", gap: "0.6rem", marginBottom: "0.75rem" }}>
-            <input type="checkbox" defaultChecked />
-            {item}
-          </label>
-        ))}
+        {["Training job completed", "Model drift alerts", "Weekly digest"].map(
+          (item) => (
+            <label
+              key={item}
+              style={{
+                display: "flex",
+                gap: "0.6rem",
+                marginBottom: "0.75rem",
+              }}
+            >
+              <input type="checkbox" defaultChecked />
+              {item}
+            </label>
+          ),
+        )}
         <button className="btn btn-primary">Save preferences</button>
       </div>
     </div>
@@ -428,7 +486,10 @@ export function AdminApiKeys() {
       <PageHeader
         title="API keys"
         actions={
-          <button className="btn btn-primary" onClick={() => navigate("/app/admin/api-keys/new")}>
+          <button
+            className="btn btn-primary"
+            onClick={() => navigate("/app/admin/api-keys/new")}
+          >
             Create key
           </button>
         }
@@ -452,7 +513,16 @@ export function AdminApiKeyCreate() {
           <label>Key name</label>
           <input placeholder="Activation service" />
         </div>
-        <button className="btn btn-primary" onClick={() => navigate("/app/admin/api-keys")}>
+        <button
+          className="btn btn-primary"
+          onClick={(e) => {
+            const panel = e.currentTarget.closest(".panel");
+            window.pendo?.track("api_key_created", {
+              key_name: panel?.querySelector("input")?.value || "",
+            });
+            navigate("/app/admin/api-keys");
+          }}
+        >
           Create
         </button>
       </div>

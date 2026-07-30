@@ -60,14 +60,21 @@ export function OnboardingCompany() {
           <input
             required
             defaultValue={onboardingDraft.company || user?.company || ""}
-            onChange={(e) => setOnboardingDraft({ ...onboardingDraft, company: e.target.value })}
+            onChange={(e) =>
+              setOnboardingDraft({
+                ...onboardingDraft,
+                company: e.target.value,
+              })
+            }
           />
         </div>
         <div className="field">
           <label>Your role</label>
           <select
             defaultValue={onboardingDraft.role || "Growth Lead"}
-            onChange={(e) => setOnboardingDraft({ ...onboardingDraft, role: e.target.value })}
+            onChange={(e) =>
+              setOnboardingDraft({ ...onboardingDraft, role: e.target.value })
+            }
           >
             <option>Growth Lead</option>
             <option>Marketing Ops</option>
@@ -99,7 +106,12 @@ export function OnboardingUseCase() {
           <label>Primary use case</label>
           <select
             value={onboardingDraft.useCase || "propensity"}
-            onChange={(e) => setOnboardingDraft({ ...onboardingDraft, useCase: e.target.value })}
+            onChange={(e) =>
+              setOnboardingDraft({
+                ...onboardingDraft,
+                useCase: e.target.value,
+              })
+            }
           >
             <option value="propensity">Propensity training</option>
             <option value="creative">Creative scoring</option>
@@ -123,7 +135,13 @@ export function OnboardingUseCase() {
 export function OnboardingChannels() {
   const { onboardingDraft, setOnboardingDraft } = useAuth();
   const navigate = useNavigate();
-  const options = ["Email", "Paid social", "Search", "Lifecycle", "Sales outreach"];
+  const options = [
+    "Email",
+    "Paid social",
+    "Search",
+    "Lifecycle",
+    "Sales outreach",
+  ];
 
   const toggle = (channel) => {
     const current = onboardingDraft.channels || [];
@@ -139,7 +157,14 @@ export function OnboardingChannels() {
     <div className="panel">
       <Stepper current="channels" />
       <p>Select channels that will receive model scores.</p>
-      <div style={{ display: "flex", flexWrap: "wrap", gap: "0.5rem", marginBottom: "1rem" }}>
+      <div
+        style={{
+          display: "flex",
+          flexWrap: "wrap",
+          gap: "0.5rem",
+          marginBottom: "1rem",
+        }}
+      >
         {options.map((channel) => {
           const active = (onboardingDraft.channels || []).includes(channel);
           return (
@@ -158,7 +183,10 @@ export function OnboardingChannels() {
         <Link className="btn btn-secondary" to="/onboarding/use-case">
           Back
         </Link>
-        <button className="btn btn-primary" onClick={() => navigate("/onboarding/dataset")}>
+        <button
+          className="btn btn-primary"
+          onClick={() => navigate("/onboarding/dataset")}
+        >
           Continue
         </button>
       </div>
@@ -182,7 +210,12 @@ export function OnboardingDataset() {
           <label>Initial dataset source</label>
           <select
             value={onboardingDraft.dataset || "crm"}
-            onChange={(e) => setOnboardingDraft({ ...onboardingDraft, dataset: e.target.value })}
+            onChange={(e) =>
+              setOnboardingDraft({
+                ...onboardingDraft,
+                dataset: e.target.value,
+              })
+            }
           >
             <option value="crm">CRM export</option>
             <option value="warehouse">Cloud warehouse</option>
@@ -215,7 +248,10 @@ export function OnboardingReview() {
         <li>Company: {onboardingDraft.company || user?.company}</li>
         <li>Role: {onboardingDraft.role || user?.role}</li>
         <li>Use case: {onboardingDraft.useCase || "propensity"}</li>
-        <li>Channels: {(onboardingDraft.channels || []).join(", ") || "Not selected"}</li>
+        <li>
+          Channels:{" "}
+          {(onboardingDraft.channels || []).join(", ") || "Not selected"}
+        </li>
         <li>Dataset: {onboardingDraft.dataset || "crm"}</li>
       </ul>
       <div style={{ display: "flex", gap: "0.5rem", flexWrap: "wrap" }}>
@@ -226,6 +262,14 @@ export function OnboardingReview() {
           className="btn btn-primary"
           onClick={() => {
             completeOnboarding();
+            window.pendo?.track("onboarding_completed", {
+              company: onboardingDraft.company || user?.company || "",
+              role: onboardingDraft.role || user?.role || "",
+              use_case: onboardingDraft.useCase || "propensity",
+              channels: (onboardingDraft.channels || []).join(", "),
+              dataset: onboardingDraft.dataset || "crm",
+              launch_action: "launch_workspace",
+            });
             navigate("/app");
           }}
         >
@@ -235,6 +279,14 @@ export function OnboardingReview() {
           className="btn btn-ghost"
           onClick={() => {
             completeOnboarding();
+            window.pendo?.track("onboarding_completed", {
+              company: onboardingDraft.company || user?.company || "",
+              role: onboardingDraft.role || user?.role || "",
+              use_case: onboardingDraft.useCase || "propensity",
+              channels: (onboardingDraft.channels || []).join(", "),
+              dataset: onboardingDraft.dataset || "crm",
+              launch_action: "launch_and_train",
+            });
             navigate("/app/training/new");
           }}
         >

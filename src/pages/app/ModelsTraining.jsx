@@ -1,4 +1,9 @@
-import { Link, useNavigate, useParams, useSearchParams } from "react-router-dom";
+import {
+  Link,
+  useNavigate,
+  useParams,
+  useSearchParams,
+} from "react-router-dom";
 import { useState } from "react";
 import PageHeader from "../../components/PageHeader";
 import { models } from "../../data/mockData";
@@ -57,10 +62,16 @@ export function ModelDetail() {
         subtitle={model.status}
         actions={
           <>
-            <Link className="btn btn-secondary" to={`/app/models/${model.id}/versions`}>
+            <Link
+              className="btn btn-secondary"
+              to={`/app/models/${model.id}/versions`}
+            >
               Versions
             </Link>
-            <Link className="btn btn-primary" to={`/app/training/new?model=${model.id}`}>
+            <Link
+              className="btn btn-primary"
+              to={`/app/training/new?model=${model.id}`}
+            >
               Retrain
             </Link>
           </>
@@ -69,7 +80,9 @@ export function ModelDetail() {
       <div className="grid-3">
         <div className="panel">
           <h3>Accuracy</h3>
-          <p style={{ fontSize: "2rem", margin: 0, color: "var(--ink)" }}>{model.accuracy}</p>
+          <p style={{ fontSize: "2rem", margin: 0, color: "var(--ink)" }}>
+            {model.accuracy}
+          </p>
         </div>
         <div className="panel">
           <h3>Deploy</h3>
@@ -131,7 +144,9 @@ export function ModelGovernance() {
     <div>
       <PageHeader title="Governance" subtitle={modelId} />
       <div className="panel">
-        <p>Approvals complete · Bias scan passed · Brand safety rules attached.</p>
+        <p>
+          Approvals complete · Bias scan passed · Brand safety rules attached.
+        </p>
         <Link className="btn btn-primary" to={`/app/models/${modelId}`}>
           Return to model
         </Link>
@@ -218,7 +233,10 @@ export function TrainingLogs() {
   return (
     <div>
       <PageHeader title="Training logs" subtitle={jobId} />
-      <div className="panel" style={{ fontFamily: "ui-monospace, monospace", fontSize: "0.85rem" }}>
+      <div
+        className="panel"
+        style={{ fontFamily: "ui-monospace, monospace", fontSize: "0.85rem" }}
+      >
         <p>[12:01:11] Loaded 1.2M events from warehouse</p>
         <p>[12:04:02] Feature store sync complete</p>
         <p>[12:11:44] Epoch 12 val_auc=0.912</p>
@@ -234,7 +252,10 @@ export function TrainingCreate() {
   const [step, setStep] = useState(1);
   const [draft, setDraft] = useState({
     name: "",
-    dataset: params.get("source") === "campaign-feedback" ? "campaign-feedback" : "warehouse",
+    dataset:
+      params.get("source") === "campaign-feedback"
+        ? "campaign-feedback"
+        : "warehouse",
     objective: "conversion",
     model: params.get("model") || "",
   });
@@ -245,7 +266,10 @@ export function TrainingCreate() {
       <div className="panel" style={{ maxWidth: 720 }}>
         <div className="steps">
           {["Dataset", "Configure", "Review", "Submit"].map((label, i) => (
-            <span key={label} className={`step-pill ${step === i + 1 ? "active" : ""} ${step > i + 1 ? "done" : ""}`}>
+            <span
+              key={label}
+              className={`step-pill ${step === i + 1 ? "active" : ""} ${step > i + 1 ? "done" : ""}`}
+            >
               {label}
             </span>
           ))}
@@ -265,11 +289,15 @@ export function TrainingCreate() {
               <label>Dataset</label>
               <select
                 value={draft.dataset}
-                onChange={(e) => setDraft({ ...draft, dataset: e.target.value })}
+                onChange={(e) =>
+                  setDraft({ ...draft, dataset: e.target.value })
+                }
               >
                 <option value="warehouse">Warehouse sync</option>
                 <option value="crm">CRM export</option>
-                <option value="campaign-feedback">Campaign feedback loop</option>
+                <option value="campaign-feedback">
+                  Campaign feedback loop
+                </option>
                 <option value="sample">Sample dataset</option>
               </select>
             </div>
@@ -285,7 +313,9 @@ export function TrainingCreate() {
               <label>Objective</label>
               <select
                 value={draft.objective}
-                onChange={(e) => setDraft({ ...draft, objective: e.target.value })}
+                onChange={(e) =>
+                  setDraft({ ...draft, objective: e.target.value })
+                }
               >
                 <option value="conversion">Conversion propensity</option>
                 <option value="churn">Churn risk</option>
@@ -344,10 +374,24 @@ export function TrainingCreate() {
               <button className="btn btn-secondary" onClick={() => setStep(3)}>
                 Back
               </button>
-              <button className="btn btn-primary" onClick={() => navigate("/app/training/job-889")}>
+              <button
+                className="btn btn-primary"
+                onClick={() => {
+                  window.pendo?.track("training_job_submitted", {
+                    job_name: draft.name || "Untitled job",
+                    dataset_source: draft.dataset,
+                    objective: draft.objective,
+                    base_model_id: draft.model || "none",
+                  });
+                  navigate("/app/training/job-889");
+                }}
+              >
                 Submit job
               </button>
-              <button className="btn btn-ghost" onClick={() => navigate("/app/training")}>
+              <button
+                className="btn btn-ghost"
+                onClick={() => navigate("/app/training")}
+              >
                 Cancel
               </button>
             </div>

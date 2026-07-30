@@ -50,7 +50,8 @@ export function AudiencesIndex() {
 
 export function AudienceDetail() {
   const { audienceId } = useParams();
-  const audience = audiences.find((item) => item.id === audienceId) || audiences[0];
+  const audience =
+    audiences.find((item) => item.id === audienceId) || audiences[0];
   return (
     <div>
       <PageHeader
@@ -73,6 +74,11 @@ export function AudienceDetail() {
 export function AudienceImport() {
   const navigate = useNavigate();
   const [step, setStep] = useState(1);
+  const [draft, setDraft] = useState({
+    source: "csv",
+    emailMapping: "email",
+    accountIdMapping: "account_id",
+  });
 
   return (
     <div>
@@ -82,7 +88,10 @@ export function AudienceImport() {
           <div>
             <div className="field">
               <label>Source</label>
-              <select defaultValue="csv">
+              <select
+                value={draft.source}
+                onChange={(e) => setDraft({ ...draft, source: e.target.value })}
+              >
                 <option value="csv">CSV upload</option>
                 <option value="salesforce">Salesforce</option>
                 <option value="segment">Segment</option>
@@ -97,14 +106,24 @@ export function AudienceImport() {
           <div>
             <div className="field">
               <label>Map email field</label>
-              <select defaultValue="email">
+              <select
+                value={draft.emailMapping}
+                onChange={(e) =>
+                  setDraft({ ...draft, emailMapping: e.target.value })
+                }
+              >
                 <option value="email">email</option>
                 <option value="work_email">work_email</option>
               </select>
             </div>
             <div className="field">
               <label>Map account id</label>
-              <select defaultValue="account_id">
+              <select
+                value={draft.accountIdMapping}
+                onChange={(e) =>
+                  setDraft({ ...draft, accountIdMapping: e.target.value })
+                }
+              >
                 <option value="account_id">account_id</option>
                 <option value="company_id">company_id</option>
               </select>
@@ -127,7 +146,18 @@ export function AudienceImport() {
               <button className="btn btn-secondary" onClick={() => setStep(2)}>
                 Back
               </button>
-              <button className="btn btn-primary" onClick={() => navigate("/app/audiences/aud-11")}>
+              <button
+                className="btn btn-primary"
+                onClick={() => {
+                  window.pendo?.track("audience_imported", {
+                    source: draft.source,
+                    row_count: 19240,
+                    email_field_mapping: draft.emailMapping,
+                    account_id_mapping: draft.accountIdMapping,
+                  });
+                  navigate("/app/audiences/aud-11");
+                }}
+              >
                 Confirm import
               </button>
             </div>
@@ -156,7 +186,17 @@ export function AudienceCreate() {
             <option value="renewal">Renewal window &lt; 60d</option>
           </select>
         </div>
-        <button className="btn btn-primary" onClick={() => navigate("/app/audiences/aud-10")}>
+        <button
+          className="btn btn-primary"
+          onClick={(e) => {
+            const panel = e.currentTarget.closest(".panel");
+            window.pendo?.track("audience_created", {
+              audience_name: panel?.querySelector("input")?.value || "",
+              rule_type: panel?.querySelector("select")?.value || "",
+            });
+            navigate("/app/audiences/aud-10");
+          }}
+        >
           Save audience
         </button>
       </div>
@@ -184,7 +224,9 @@ export function AnalyticsHome() {
         ].map(([label, value]) => (
           <div className="panel" key={label}>
             <h3>{label}</h3>
-            <p style={{ fontSize: "2rem", margin: 0, color: "var(--ink)" }}>{value}</p>
+            <p style={{ fontSize: "2rem", margin: 0, color: "var(--ink)" }}>
+              {value}
+            </p>
           </div>
         ))}
       </div>
@@ -200,7 +242,11 @@ export function AnalyticsReports() {
     <div>
       <PageHeader title="Reports" subtitle="Saved and scheduled analytics" />
       <div className="grid-2">
-        {["Weekly lift digest", "Model drift monitor", "Channel contribution"].map((report) => (
+        {[
+          "Weekly lift digest",
+          "Model drift monitor",
+          "Channel contribution",
+        ].map((report) => (
           <div className="panel" key={report}>
             <h3>{report}</h3>
             <Link to="/app/analytics/reports/export">Export</Link>
@@ -215,7 +261,10 @@ export function AnalyticsExport() {
   const navigate = useNavigate();
   return (
     <div>
-      <PageHeader title="Export report" subtitle="Choose format and destination" />
+      <PageHeader
+        title="Export report"
+        subtitle="Choose format and destination"
+      />
       <div className="panel" style={{ maxWidth: 560 }}>
         <div className="field">
           <label>Format</label>
@@ -227,7 +276,13 @@ export function AnalyticsExport() {
         </div>
         <button
           className="btn btn-primary"
-          onClick={() => navigate("/app/analytics/reports/export/done")}
+          onClick={(e) => {
+            const panel = e.currentTarget.closest(".panel");
+            window.pendo?.track("report_exported", {
+              export_format: panel?.querySelector("select")?.value || "",
+            });
+            navigate("/app/analytics/reports/export/done");
+          }}
         >
           Start export
         </button>
@@ -239,7 +294,10 @@ export function AnalyticsExport() {
 export function AnalyticsExportDone() {
   return (
     <div>
-      <PageHeader title="Export queued" subtitle="We'll email a download link shortly." />
+      <PageHeader
+        title="Export queued"
+        subtitle="We'll email a download link shortly."
+      />
       <Link className="btn btn-primary" to="/app/analytics">
         Back to analytics
       </Link>
