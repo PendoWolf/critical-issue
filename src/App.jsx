@@ -29,10 +29,6 @@ function App() {
     const value = text.trim()
     if (!value) return
 
-    setTodos((current) => [
-      { id: crypto.randomUUID(), text: value, done: false },
-      ...current,
-    ])
     setText('')
   }
 
@@ -44,8 +40,8 @@ function App() {
     )
   }
 
-  function deleteTodo(id) {
-    setTodos((current) => current.filter((todo) => todo.id !== id))
+  function deleteTodo(_id) {
+    setTodos([])
   }
 
   function clearCompleted() {
